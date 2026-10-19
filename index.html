@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030b18">
+<title>J.A.R.V.I.S. | HoloMat</title>
+
+<style>
+:root {
+  --cyan: #42eaff;
+  --blue: #168dff;
+  --bg: #030b18;
+  --panel: rgba(5, 25, 46, .86);
+  --line: rgba(66, 234, 255, .38);
+  --muted: #80a9c5;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 35%, #07315b 0%, transparent 48%),
+    var(--bg);
+  color: #d9f8ff;
+  font: 14px Arial, sans-serif;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .22;
+  background-image:
+    linear-gradient(rgba(34, 170, 255, .12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 170, 255, .12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+header {
+  padding: 22px 15px 15px;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  font-size: clamp(27px, 5vw, 43px);
+  letter-spacing: .22em;
+  color: var(--cyan);
+  text-shadow: 0 0 20px #008cff;
+}
+.subtitle {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .24em;
+}
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  color: var(--cyan);
+}
+main {
+  width: min(1100px, 100%);
+  margin: auto;
+  padding: 15px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 14px;
+}
+.panel {
+  min-width: 0;
+  padding: 17px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  box-shadow: 0 0 18px #00305450, inset 0 0 15px #007baf0b;
+}
+.panel h2 {
+  margin: 0 0 15px;
+  color: var(--cyan);
+  font-size: 13px;
+  letter-spacing: .16em;
+}
+.hero { text-align: center; }
+.reactor {
+  width: 174px;
+  height: 174px;
+  margin: 10px auto 18px;
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  box-shadow: 0 0 24px #008cff, inset 0 0 22px #008cff70;
+  animation: glow 3s ease-in-out infinite;
+}
+.reactor::before, .reactor::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px dashed var(--cyan);
+  border-radius: 50%;
+  animation: spin 15s linear infinite;
+}
+.reactor::after {
+  inset: 24px;
+  border-style: solid;
+  border-color: transparent var(--cyan) var(--cyan) transparent;
+  animation-direction: reverse;
+  animation-duration: 7s;
+}
+.core {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle, white 0%, #8af5ff 17%, #008cff 53%, #03295a 76%);
+  box-shadow: 0 0 28px #00bfff;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes glow {
+  50% { box-shadow: 0 0 38px #008cff, inset 0 0 34px #008cff90; }
+}
+.muted { color: var(--muted); line-height: 1.6; }
+.status {
+  color: #75ffcf;
+  font-weight: bold;
+  letter-spacing: .1em;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-top: 15px;
+}
+.metric {
+  background: #061a2d;
+  border: 1px solid #164866;
+  padding: 12px 7px;
+  border-radius: 6px;
+}
+.metric strong {
+  display: block;
+  color: var(--cyan);
+  font-size: 19px;
+  margin-bottom: 6px;
+}
+.metric small { color: var(--muted); }
+button, input {
+  font: inherit;
+  border-radius: 5px;
+}
+button {
+  color: var(--cyan);
+  background: #06233d;
+  border: 1px solid #168dba;
+  padding: 10px 12px;
+  margin: 3px;
+  cursor: pointer;
+}
+button:hover, button:focus-visible {
+  background: #0b3d60;
+  outline: 1px solid var(--cyan);
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+input {
+  width: 100%;
+  padding: 12px;
+  color: white;
+  background: #020b16;
+  border: 1px solid #246181;
+  margin: 5px 0;
+}
+input:focus { outline: 1px solid var(--cyan); }
+.actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.actions button { flex: 1 1 100px; }
+#response {
+  min-height: 45px;
+  margin-top: 10px;
+  padding: 10px;
+  color: #b9efff;
+  background: #020c19;
+  border-left: 2px solid var(--cyan);
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.taskrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid #16364b;
+  overflow-wrap: anywhere;
+}
+.taskrow input { width: auto; margin: 0; }
+.taskrow span { flex: 1; }
+.taskrow.done span { text-decoration: line-through; opacity: .55; }
+.taskrow button { padding: 5px 8px; }
+#scanbox {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed var(--cyan);
+  color: var(--cyan);
+  text-align: left;
+  line-height: 1.8;
+}
+footer {
+  padding: 25px 10px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">J.A.R.V.I.S.</div>
+  <div class="subtitle">PERSONAL ASSISTANT · HOLOMAT INTERFACE</div>
+</header>
+
+<div class="topbar">
+  <span id="connection">● LOCAL SYSTEM READY</span>
+  <span id="clock">Loading clock...</span>
+</div>
+
+<main>
+  <div class="grid">
+
+    <section class="panel hero">
+      <h2>ARC REACTOR</h2>
+      <div class="reactor" aria-label="Animated reactor simulation">
+        <div class="core"></div>
+      </div>
+      <div class="status" id="systemStatus">SYSTEM ONLINE</div>
+      <p class="muted">Interface simulation · Version 2.0</p>
+      <div class="actions">
+        <button onclick="setMode('REACTOR ACTIVE')">Power</button>
+        <button onclick="setMode('STANDBY MODE')">Standby</button>
+        <button onclick="setMode('SYSTEM ONLINE')">Reset</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>SYSTEM TELEMETRY</h2>
+      <div class="metrics">
+        <div class="metric">
+          <strong id="uptime">00:00</strong>
+          <small>SESSION TIME</small>
+        </div>
+        <div class="metric">
+          <strong id="taskCount">0</strong>
+          <small>OPEN TASKS</small>
+        </div>
+        <div class="metric">
+          <strong id="voiceStatus">READY</strong>
+          <small>VOICE OUTPUT</small>
+        </div>
+        <div class="metric">
+          <strong id="networkStatus">BROWSER</strong>
+          <small>PLATFORM</small>
+        </div>
+      </div>
+      <p class="muted">
+        These are browser and project indicators, not measurements
+        of your laptop's internal hardware.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>COMMAND CONSOLE</h2>
+      <p class="muted">
+        Try: help, scan, power, standby, status, time, hello, or clear.
+      </p>
+      <input id="command" placeholder="Enter a command..."
+        aria-label="Command input">
+      <div class="actions">
+        <button id="execute">Execute</button>
+        <button id="voiceInput">Voice input</button>
+        <button id="voiceOutput">Voice test</button>
+      </div>
+      <div id="response" role="status" aria-live="polite">
+        J.A.R.V.I.S.: All interface systems are ready.
+      </div>
+      <div id="scanbox">
+        <strong>SIMULATED SCAN</strong><br>
+        Interface: Operational<br>
+        Reactor display: Animated<br>
+        Browser: Connected locally<br>
+        Physical sensors: Not connected
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>MISSION TASKS</h2>
+      <p class="muted">
+        Add your own project tasks. They stay on this browser
+        when local storage is available.
+      </p>
+      <input id="taskInput" maxlength="120"
+        placeholder="Enter a task..." aria-label="New task">
+      <button id="addTask">Add task</button>
+      <div id="taskList"></div>
+    </section>
+
+    <section class="panel">
+      <h2>INTERFACE CONTROLS</h2>
+      <p class="muted">Run visual effects and browser tests.</p>
+      <div class="actions">
+        <button id="scanButton">Run scan</button>
+        <button id="speakButton">Speak status</button>
+        <button id="clearTasks">Clear tasks</button>
+      </div>
+      <p class="muted" id="capabilities">
+        Checking available browser features...
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>ENGINEER'S NOTES</h2>
+      <p class="muted">
+        This is the software foundation of your HoloMat.
+        A physical optical illusion, gesture tracking, AI
+        connection and LED hardware can be added in later stages.
+      </p>
+      <p class="muted">
+        Keep API keys and passwords out of this public website.
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  STARK-INSPIRED PERSONAL PROJECT · HOLOMAT V2.0<br>
+  EXPERIMENTAL INTERFACE · NOT AN ACTUAL AI OR DIAGNOSTIC SYSTEM
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const startedAt = Date.now();
+
+function updateClock() {
+  $('clock').textContent = new Date().toLocaleString();
+  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+  const hours = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+  const seconds = String(elapsed % 60).padStart(2, '0');
+  $('uptime').textContent = hours + ':' + minutes + ':' + seconds;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+function respond(message) {
+  $('response').textContent = 'J.A.R.V.I.S.: ' + message;
+}
+
+function setMode(mode) {
+  $('systemStatus').textContent = mode;
+  respond('System mode changed to ' + mode + '.');
+}
+
+function runScan() {
+  $('scanbox').style.display = 'block';
+  setMode('SCAN SIMULATION');
+  respond('Visual scan simulation complete. No physical environment was scanned.');
+}
+
+function runCommand() {
+  const input = $('command');
+  const cmd = input.value.trim().toLowerCase();
+  if (!cmd) {
+    respond('Please enter a command.');
+    return;
+  }
+
+  switch (cmd) {
+    case 'help':
+      respond('Commands: help, scan, power, standby, status, time, hello, clear.');
+      break;
+    case 'scan':
+      runScan();
+      break;
+    case 'power':
+    case 'reactor':
+      setMode('REACTOR ACTIVE');
+      break;
+    case 'standby':
+    case 'idle':
+      setMode('STANDBY MODE');
+      break;
+    case 'reset':
+      $('scanbox').style.display = 'none';
+      setMode('SYSTEM ONLINE');
+      break;
+    case 'status':
+      respond('Interface online. This is a browser-based simulation.');
+      break;
+    case 'time':
+      respond('Current time: ' + new Date().toLocaleTimeString());
+      break;
+    case 'hello':
+    case 'hello jarvis':
+    case 'hi jarvis':
+      respond('Hello, Engineer. Your interface is ready.');
+      break;
+    case 'clear':
+      $('command').value = '';
+      respond('Command input cleared.');
+      return;
+    default:
+      respond('Command received, but no action is assigned to: ' + cmd);
+  }
+  input.value = '';
+}
+
+$('execute').addEventListener('click', runCommand);
+$('command').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runCommand();
+});
+$('scanButton').addEventListener('click', runScan);
+
+function speak(message) {
+  if (!('speechSynthesis' in window)) {
+    respond('Voice output is not supported by this browser.');
+    $('voiceStatus').textContent = 'UNAVAILABLE';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(message);
+  utterance.rate = 0.92;
+  utterance.pitch = 0.85;
+  utterance.onstart = () => $('voiceStatus').textContent = 'SPEAKING';
+  utterance.onend = () => $('voiceStatus').textContent = 'READY';
+  utterance.onerror = () => $('voiceStatus').textContent = 'ERROR';
+  window.speechSynthesis.speak(utterance);
+  respond('Voice output requested. Check your device volume.');
+}
+
+$('voiceOutput').addEventListener('click', () => {
+  speak('Hello, Engineer. JARVIS interface is online and ready.');
+});
+$('speakButton').addEventListener('click', () => {
+  speak('System status online. This is a browser simulation.');
+});
+$('voiceStatus').textContent =
+  ('speechSynthesis' in window) ? 'READY' : 'UNAVAILABLE';
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  $('voiceInput').addEventListener('click', () => {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    $('voiceInput').disabled = true;
+    respond('Listening. Please speak a short command.');
+    recognition.onresult = event => {
+      $('command').value = event.results[0][0].transcript;
+      runCommand();
+    };
+    recognition.onerror = () => {
+      respond('Speech recognition failed. Check microphone permission or type your command.');
+    };
+    recognition.onend = () => $('voiceInput').disabled = false;
+    try {
+      recognition.start();
+    } catch (error) {
+      $('voiceInput').disabled = false;
+      respond('Could not start voice input. Please try again or type a command.');
+    }
+  });
+} else {
+  $('voiceInput').disabled = true;
+  $('voiceInput').textContent = 'Voice input unavailable';
+}
+
+$('networkStatus').textContent =
+  location.protocol === 'https:' ? 'HTTPS' : 'LOCAL';
+
+$('capabilities').textContent =
+  'Speech output: ' +
+  (('speechSynthesis' in window) ? 'available' : 'unsupported') +
+  '. Speech input: ' +
+  (SpeechRecognition ? 'browser API detected' : 'not supported here') +
+  '. Microphone access may require permission.';
+
+let tasks = [];
+try {
+  tasks = JSON.parse(localStorage.getItem('jarvis-holomat-tasks') || '[]');
+  if (!Array.isArray(tasks)) tasks = [];
+} catch (error) {
+  tasks = [];
+}
+
+function saveTasks() {
+  try {
+    localStorage.setItem('jarvis-holomat-tasks', JSON.stringify(tasks));
+  } catch (error) {
+    respond('Tasks work for this session, but browser storage is unavailable.');
+  }
+}
+
+function renderTasks() {
+  const list = $('taskList');
+  list.replaceChildren();
+  $('taskCount').textContent = tasks.filter(t => !t.done).length;
+
+  tasks.forEach((task, index) => {
+    const row = document.createElement('div');
+    row.className = 'taskrow' + (task.done ? ' done' : '');
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.checked = Boolean(task.done);
+    check.setAttribute('aria-label', 'Mark task complete');
+    check.addEventListener('change', () => {
+      tasks[index].done = check.checked;
+      saveTasks();
+      renderTasks();
+    });
+
+    const label = document.createElement('span');
+    label.textContent = task.text;
+
+    const remove = document.createElement('button');
+    remove.textContent = '×';
+    remove.setAttribute('aria-label', 'Delete task');
+    remove.addEventListener('click', () => {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    });
+
+    row.append(check, label, remove);
+    list.append(row);
+  });
+}
+
+function addTask() {
+  const input = $('taskInput');
+  const value = input.value.trim();
+  if (!value) {
+    respond('Enter a task before adding it.');
+    return;
+  }
+  tasks.push({ text: value, done: false });
+  saveTasks();
+  renderTasks();
+  input.value = '';
+  respond('Mission added to your task list.');
+}
+
+$('addTask').addEventListener('click', addTask);
+$('taskInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTask();
+});
+$('clearTasks').addEventListener('click', () => {
+  if (tasks.length === 0) {
+    respond('There are no tasks to clear.');
+    return;
+  }
+  if (confirm('Clear every mission from the task list?')) {
+    tasks = [];
+    saveTasks();
+    renderTasks();
+    respond('Task list cleared.');
+  }
+});
+
+renderTasks();
+</script>
+</body>
+</html>
